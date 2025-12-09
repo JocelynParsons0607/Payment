@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    // This forces Vite to bundle the library into one file
+    include: ['lucide-react'], 
   },
 });
