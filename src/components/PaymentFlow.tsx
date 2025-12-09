@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Send, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useStore } from '../store/useStore';
 import { supabase } from '../lib/supabase';
@@ -20,11 +20,11 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
   const [manualName, setManualName] = useState('');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
-  const [provider, setProvider] = useState<Provider>(selectedProvider || 'GPay');
+  const [provider] = useState<Provider>(selectedProvider || 'GPay');
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ success: boolean; message: string; txnId?: string } | null>(null);
 
-  const providerColors = getProviderColors(provider);
+  const colors = getProviderColors(provider);
 
   useEffect(() => {
     loadContacts();
@@ -121,7 +121,7 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
           txnId: data.transaction.txn_id,
         });
         setStep('result');
-      }, 6000);
+      }, 4000);
     } catch (err) {
       setResult({
         success: false,
@@ -172,7 +172,8 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
           <div className="space-y-3">
             <button
               onClick={resetFlow}
-              className={`w-full py-3 bg-gradient-to-r ${providerColors.gradient} text-white rounded-xl font-semibold hover:opacity-90 transition`}
+              className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:opacity-90 transition"
+              style={{ backgroundColor: colors.primary }}
             >
               Make Another Payment
             </button>
@@ -190,13 +191,10 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin" style={{ color: colors.primary }} />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Processing Payment...</h3>
-          <p className="text-gray-600 mb-4">Please wait while we process your transaction</p>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
-            This is a simulated transaction. No real money is being transferred.
-          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Processing...</h3>
+          <p className="text-gray-600 mb-4">Please wait securely</p>
         </div>
       </div>
     );
@@ -213,53 +211,20 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Confirm Payment</h2>
 
-          <div className={`bg-gradient-to-br ${providerColors.gradient} text-white rounded-2xl p-6 mb-6 shadow-lg`}>
-            <p className="text-sm opacity-90 mb-2">Paying to</p>
+          <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border-t-4" style={{ borderColor: colors.primary }}>
+            <p className="text-sm text-gray-500 mb-1">Paying to</p>
             <p className="text-2xl font-bold mb-1">{selectedContact?.name}</p>
-            <p className="text-sm opacity-75">{selectedContact?.upi_id}</p>
-            <div className="mt-6 pt-6 border-t border-white/20">
-              <p className="text-sm opacity-90 mb-2">Amount</p>
+            <p className="text-sm text-gray-500 mb-6">{selectedContact?.upi_id}</p>
+            <div className="pt-6 border-t border-gray-100">
+              <p className="text-sm text-gray-500 mb-1">Amount</p>
               <p className="text-4xl font-bold">{formatCurrency(parseFloat(amount))}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Provider</label>
-              <div className="grid grid-cols-3 gap-3">
-                {(['GPay', 'PhonePe', 'Paytm'] as Provider[]).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setProvider(p)}
-                    className={`p-3 rounded-lg border-2 transition ${
-                      provider === p
-                        ? `${getProviderColors(p).border} ${getProviderColors(p).bg}`
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <p className={`text-sm font-semibold ${provider === p ? getProviderColors(p).text : 'text-gray-700'}`}>
-                      {p}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {note && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
-                <p className="text-gray-900">{note}</p>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-sm text-yellow-800">
-            This is a demo transaction. No real money will be transferred.
-          </div>
-
           <button
             onClick={handlePayment}
-            className={`w-full py-4 bg-gradient-to-r ${providerColors.gradient} text-white rounded-xl font-bold text-lg hover:opacity-90 transition shadow-lg`}
+            className="w-full py-4 text-white rounded-xl font-bold text-lg hover:opacity-90 transition shadow-lg"
+            style={{ backgroundColor: colors.primary }}
           >
             Confirm & Pay {formatCurrency(parseFloat(amount))}
           </button>
@@ -290,9 +255,11 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none"
+                  className="w-full pl-12 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none"
+                  style={{ borderColor: amount ? colors.primary : '#e5e7eb' }}
                   step="0.01"
                   min="0"
+                  autoFocus
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">Available balance: {formatCurrency(profile?.wallet_balance || 0)}</p>
@@ -320,7 +287,8 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
           <button
             onClick={handleAmountNext}
             disabled={!amount}
-            className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 text-white rounded-xl font-bold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: colors.primary }}
           >
             Continue
           </button>
@@ -372,7 +340,8 @@ export function PaymentFlow({ onBack }: PaymentFlowProps) {
           <button
             onClick={handleManualUPI}
             disabled={!manualUPI || !manualName}
-            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 text-white rounded-xl font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: colors.primary }}
           >
             Continue
           </button>

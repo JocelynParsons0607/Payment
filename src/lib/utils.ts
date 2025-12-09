@@ -30,30 +30,36 @@ export function getProviderColors(provider: Provider) {
   switch (provider) {
     case 'GPay':
       return {
-        primary: '#4285F4',
+        primary: '#1a73e8', // Google Blue
         secondary: '#34A853',
-        gradient: 'from-blue-500 to-green-500',
-        bg: 'bg-blue-50',
-        text: 'text-blue-600',
-        border: 'border-blue-500',
+        gradient: 'bg-white', // GPay is mostly white now
+        headerBg: 'bg-white',
+        bg: 'bg-white',
+        text: 'text-gray-900',
+        border: 'border-gray-200',
+        accent: 'text-blue-600',
       };
     case 'PhonePe':
       return {
-        primary: '#5F259F',
+        primary: '#6739b7', // PhonePe Purple
         secondary: '#7C3AA8',
-        gradient: 'from-purple-600 to-purple-700',
-        bg: 'bg-purple-50',
-        text: 'text-purple-600',
-        border: 'border-purple-500',
+        gradient: 'from-[#6739b7] to-[#512da8]',
+        headerBg: 'bg-[#6739b7]',
+        bg: 'bg-[#f1f3f6]', // Light gray background
+        text: 'text-[#6739b7]',
+        border: 'border-[#6739b7]',
+        accent: 'text-[#6739b7]',
       };
     case 'Paytm':
       return {
-        primary: '#00B9F5',
-        secondary: '#002E6E',
-        gradient: 'from-cyan-500 to-blue-800',
-        bg: 'bg-cyan-50',
-        text: 'text-cyan-600',
-        border: 'border-cyan-500',
+        primary: '#00BAF2', // Paytm Blue
+        secondary: '#002E6E', // Dark Blue
+        gradient: 'from-[#00baf2] to-[#002e6e]',
+        headerBg: 'bg-white', // Paytm new UI is white header
+        bg: 'bg-[#f5f7fa]',
+        text: 'text-[#002E6E]',
+        border: 'border-[#e0e0e0]',
+        accent: 'text-[#00BAF2]',
       };
   }
 }
